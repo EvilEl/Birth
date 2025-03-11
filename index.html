@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3x3 Лотерея</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background: gray;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .disabled {
+      pointer-events: none;
+      background: lightgray;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>3x3 Лотерея</h1>
+  <div class="grid" id="grid"></div>
+  <h2 id="result"></h2>
+  <button onclick="resetGame()">Сбросить</button>
+
+  <script>
+    const prizes = [100, 200, 500, 1000, 3000];
+    let cells = [];
+    let selected = [];
+
+    function generateGrid() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      cells = Array.from({ length: 9 }, () => prizes[Math.floor(Math.random() * prizes.length)]);
+      selected = [];
+
+      cells.forEach((value, index) => {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.index = index;
+        cell.onclick = () => revealCell(cell, index);
+        grid.appendChild(cell);
+      });
+    }
+
+    function revealCell(cell, index) {
+      if (selected.length < 3) {
+        cell.textContent = cells[index];
+        cell.classList.add('disabled');
+        selected.push(cells[index]);
+
+        if (selected.length === 3) checkResult();
+      }
+    }
+
+    function checkResult() {
+      const resultElement = document.getElementById('result');
+      const [a, b, c] = selected;
+      resultElement.textContent = (a === b && b === c) ? `Вы выиграли ${a}!` : 'Попробуйте снова!';
+    }
+
+    function resetGame() {
+      document.getElementById('result').textContent = '';
+      generateGrid();
+    }
+
+    generateGrid();
+  </script>
+</body>
+
+</html>
